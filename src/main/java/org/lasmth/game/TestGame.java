@@ -3,12 +3,14 @@ package org.lasmth.game;
 import org.lasmth.graphics.Loader;
 import org.lasmth.graphics.RawModel;
 import org.lasmth.graphics.Renderer;
+import org.lasmth.graphics.shaders.staticshader.StaticShader;
 import org.lasmth.windowmanager.Window;
 
 public class TestGame {
     private final Window window = Window.getInstance();
     private final Loader loader = new Loader();
     private final Renderer renderer = new Renderer();
+    private final StaticShader staticShader = new StaticShader();
 
     public static void main(String[] args) {
         new TestGame().run();
@@ -31,7 +33,9 @@ public class TestGame {
 
         while (!window.windowShouldClose()) {
             renderer.prepare();
+            staticShader.start();
             renderer.render(rawModel);
+            staticShader.stop();
             iterateGameLoop();
 
         }
@@ -40,6 +44,7 @@ public class TestGame {
     }
 
     private void finalization() {
+        staticShader.cleanUp();
         window.destroyWindow();
         loader.cleanUp();
         window.stopGLFW();
