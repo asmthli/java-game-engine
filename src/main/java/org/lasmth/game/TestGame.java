@@ -18,28 +18,28 @@ public class TestGame {
     }
 
     private void run() {
-        float[] vertices = {
-                -0.5f, 0.5f, 0f, // V0
-                -0.5f, -0.5f, 0f, // V1
-                0.5f, -0.5f, 0f, // V2
-                0.5f, 0.5f, 0f, // V3
+         float[] vertices = {
+            -0.5f, 0.5f, 0f,
+            -0.5f, -0.5f, 0f,
+            0.5f, -0.5f, 0f,
+            0.5f, 0.5f, 0f,
         };
 
-        int[] indices = {
-                0,1,3,
-                3,1,2
-        };
+         int[] indices = {
+                 0,1,3,
+                 3,1,2
+         };
 
-        float [] textureCoords = {
-                0,0, // V0
-                0,1,  // V1
-                1,1,  // V2
-                1,0  // V3
-        };
+         float[] textureCoords = {
+                 0,0,
+                 0,1,
+                 1,1,
+                 1,0
+         };
 
-        RawModel rawModel = loader.loadToVAO(vertices, textureCoords, indices);
-        int textureId = loader.loadTexture("C:\\Users\\Liam\\IdeaProjects\\java-game-engine\\src\\main\\resources\\square.png");
-        TexturedModel texturedModel = new TexturedModel(rawModel, textureId);
+         RawModel rawModel = loader.loadToVAO(vertices, textureCoords, indices);
+         int textureId = loader.loadTexture("image.png");
+         TexturedModel texturedModel = new TexturedModel(rawModel, textureId);
 
         while (!window.windowShouldClose()) {
             renderer.prepare();
@@ -47,7 +47,6 @@ public class TestGame {
             renderer.render(texturedModel);
             staticShader.stop();
             iterateGameLoop();
-
         }
 
         finalization();

@@ -1,6 +1,5 @@
 package org.lasmth.graphics;
 
-import org.lasmth.models.RawModel;
 import org.lasmth.models.TexturedModel;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;

@@ -11,9 +11,6 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.lwjgl.opengl.GL11C.GL_UNPACK_ALIGNMENT;
-import static org.lwjgl.opengl.GL11C.glPixelStorei;
-
 /**
  * Loads raw vertex data into memory as vertex objects (VAOs and VBOs), preparing it
  * to be rendered.
@@ -25,6 +22,8 @@ public class Loader {
     private List<Integer> vaos = new ArrayList<>();
     private List<Integer> vbos = new ArrayList<>();
     private List<Integer> textures = new ArrayList<>();
+
+    private static final String RESOURCES_DIRECTORY_PATH = "src/main/resources/";
 
     /**
      * Store an array of vertex positions in an openGL Vertex Array Object (VAO).
@@ -42,30 +41,39 @@ public class Loader {
         return new RawModel(vaoID, indices.length);
     }
 
+    /**
+     * Load a texture from an image file into memory, registering it with OpenGL.
+     * @param fileName Texture image file of format [file_name].[extension]
+     * @return ID for texture loaded in memory.
+     */
     public int loadTexture(String fileName) {
+        String filePath = RESOURCES_DIRECTORY_PATH + fileName;
         // Buffers for holding the named values after being extracted in the decoding process.
 		IntBuffer width = BufferUtils.createIntBuffer(1);
 		IntBuffer height = BufferUtils.createIntBuffer(1);
 		IntBuffer channels_in_file = BufferUtils.createIntBuffer(1);
 
-		// Decoding the image data and loading the pixel data into a byte buffer.
+		// Notice the output into the given buffer arguments also.
 		// Desired channels in 4. We are expecting RGBA.
-        ByteBuffer decodedImageData = STBImage.stbi_load(fileName, width, height, channels_in_file, 4);
+        ByteBuffer decodedImageData = STBImage.stbi_load(filePath, width, height, channels_in_file, 4);
 
-        decodedImageData.flip();
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-        //TODO Handle this better!
         if (decodedImageData == null) {
-            System.out.println("File loading failed.");
+            System.out.println("Loading of " + filePath + " failed.\nReason: " + STBImage.stbi_failure_reason());
         }
-        // A place in memory in which we will store our texture data.
+
+        // Reserve an ID for the texture.
         int textureId = GL11.glGenTextures();
 
         // Activate a texture unit.
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-        // Bind our texture to the texture unit.
+        // Bind the texture ID to the texture unit.
 		GL11.glBindTexture(GL13.GL_TEXTURE_2D, textureId);
+
+        // Minifying and magnification functions for when the texture is of a different size than
+        // the shape they are mapping to. These have to be set otherwise the loaded texture was displaying
+        // as fully black. Seems like these should have just been set to a default?
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
 
         // Change the state of the bound texture unit to contain our texture data (along with
         // how to interpret that data).
