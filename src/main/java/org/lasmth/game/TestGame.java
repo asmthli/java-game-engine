@@ -19,12 +19,15 @@ public class TestGame {
             -0.5f, 0.5f, 0f,
             -0.5f, -0.5f, 0f,
             0.5f, -0.5f, 0f,
-            0.5f, -0.5f, 0f,
             0.5f, 0.5f, 0f,
-            -0.5f, 0.5f, 0f
         };
 
-         RawModel rawModel = loader.loadToVAO(vertices);
+         int[] indices = {
+                 0,1,3,
+                 3,1,2
+         };
+
+         RawModel rawModel = loader.loadToVAO(vertices, indices);
 
         while (!window.windowShouldClose()) {
             renderer.prepare();

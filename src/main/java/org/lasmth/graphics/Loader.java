@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,14 +23,16 @@ public class Loader {
 
     /**
      * Store an array of vertex positions in an openGL Vertex Array Object (VAO).
-     * @param positions Unstructured array of floats describing triangle vertices in 3D.
+     * @param positions 3D position coordinates for each vertex.
+     * @param indices Rendering indices - the order in which to render our stored positions.
      * @return RawModel which stores the VAO information for the model.
      */
-    public RawModel loadToVAO(float[] positions) {
+    public RawModel loadToVAO(float[] positions, int[] indices) {
         int vaoID = createVAO();
+        bindIndicesBuffer(indices);
         storeDataInBoundVAO(0, positions);
         unbindVAO();
-        return new RawModel(vaoID, positions.length/3);
+        return new RawModel(vaoID, indices.length);
     }
 
     /**
@@ -82,6 +85,27 @@ public class Loader {
 
     private void unbindVAO() {
         GL30.glBindVertexArray(0);
+    }
+
+    /**
+     * Binds a list of integers as an index buffer. An index buffer defines the order in which vertices are drawn.<p/>
+     * As opposed to repeating the entire vertex information to define the render order, using just an index
+     * for this can greatly improve memory usage.
+     * @param indices Rendering order.
+     */
+    private void bindIndicesBuffer(int[] indices) {
+        int vboId = GL15.glGenBuffers();
+        vbos.add(vboId);
+        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboId);
+        IntBuffer buffer = storeDataInIntBuffer(indices);
+        GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
+    }
+
+    private IntBuffer storeDataInIntBuffer(int[] data) {
+        IntBuffer buffer = BufferUtils.createIntBuffer(data.length);
+        buffer.put(data);
+        buffer.flip();
+        return buffer;
     }
 
     private FloatBuffer storeDataInFloatBuffer(float[] data) {
