@@ -30,7 +30,10 @@ public class Renderer {
      * Clear the screen OpenGL canvas.
      */
     public void prepare() {
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+        // Instructs OpenGL to clear the depth buffer every frame.
+        GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
     }
 
     /**
