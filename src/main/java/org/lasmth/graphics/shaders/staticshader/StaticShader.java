@@ -1,5 +1,6 @@
 package org.lasmth.graphics.shaders.staticshader;
 
+import org.joml.Matrix4f;
 import org.lasmth.graphics.shaders.ShaderProgram;
 
 /**
@@ -10,8 +11,19 @@ public class StaticShader extends ShaderProgram {
     private static final String VERTEX_FILE = "staticshader/vertex.txt";
     private static final String FRAGMENT_FILE = "staticshader/fragment.txt";
 
+    private int location_transformationMatrix;
+
     public StaticShader() {
         super(VERTEX_FILE, FRAGMENT_FILE);
+    }
+
+    public void loadTransformationMatrix(Matrix4f matrix) {
+        super.loadMatrix(location_transformationMatrix, matrix);
+    }
+
+    @Override
+    protected void getAllUniformLocations() {
+        location_transformationMatrix = super.getUniformLocation("transformationMatrix");
     }
 
     @Override

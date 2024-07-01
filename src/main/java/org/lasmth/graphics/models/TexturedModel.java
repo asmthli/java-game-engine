@@ -1,4 +1,4 @@
-package org.lasmth.models;
+package org.lasmth.graphics.models;
 
 public class TexturedModel {
 

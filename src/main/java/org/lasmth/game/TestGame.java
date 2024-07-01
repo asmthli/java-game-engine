@@ -1,10 +1,12 @@
 package org.lasmth.game;
 
+import org.joml.Vector3f;
 import org.lasmth.graphics.Loader;
-import org.lasmth.models.RawModel;
+import org.lasmth.graphics.entities.Entity;
+import org.lasmth.graphics.models.RawModel;
 import org.lasmth.graphics.Renderer;
 import org.lasmth.graphics.shaders.staticshader.StaticShader;
-import org.lasmth.models.TexturedModel;
+import org.lasmth.graphics.models.TexturedModel;
 import org.lasmth.windowmanager.Window;
 
 public class TestGame {
@@ -40,11 +42,12 @@ public class TestGame {
          RawModel rawModel = loader.loadToVAO(vertices, textureCoords, indices);
          int textureId = loader.loadTexture("image.png");
          TexturedModel texturedModel = new TexturedModel(rawModel, textureId);
+         Entity entity = new Entity(texturedModel, new Vector3f(-1, 0, 0), 0, 0, 0, 1);
 
         while (!window.windowShouldClose()) {
             renderer.prepare();
             staticShader.start();
-            renderer.render(texturedModel);
+            renderer.render(entity, staticShader);
             staticShader.stop();
             iterateGameLoop();
         }

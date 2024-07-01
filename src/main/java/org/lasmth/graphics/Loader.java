@@ -1,6 +1,6 @@
 package org.lasmth.graphics;
 
-import org.lasmth.models.RawModel;
+import org.lasmth.graphics.models.RawModel;
 import org.lwjgl.opengl.*;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBImage;

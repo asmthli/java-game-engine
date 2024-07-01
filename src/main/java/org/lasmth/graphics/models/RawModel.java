@@ -1,4 +1,4 @@
-package org.lasmth.models;
+package org.lasmth.graphics.models;
 
 /**
  * Representation of a 3D model as vertex data stored in memory. Note that the

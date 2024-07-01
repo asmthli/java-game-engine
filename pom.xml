@@ -28,6 +28,7 @@
         </dependencies>
     </dependencyManagement>
 
+    <!-- LWJGL packages -->
     <dependencies>
         <dependency>
             <groupId>org.lwjgl</groupId>
@@ -83,6 +84,14 @@
             <artifactId>lwjgl-stb</artifactId>
             <classifier>${lwjgl.natives}</classifier>
         </dependency>
+
+        <!-- JOML: Java OpenGL Math Library -->
+        <dependency>
+            <groupId>org.joml</groupId>
+            <artifactId>joml</artifactId>
+            <version>1.10.6</version>
+        </dependency>
+
     </dependencies>
 
 </project>

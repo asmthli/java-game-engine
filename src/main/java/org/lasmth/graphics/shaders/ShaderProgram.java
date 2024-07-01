@@ -1,5 +1,8 @@
 package org.lasmth.graphics.shaders;
 
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
@@ -7,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.FileReader;
+import java.nio.FloatBuffer;
 
 /**
  * Abstract class which creates an OpenGL shader program and stores it in memory. Allows us to
@@ -20,6 +24,9 @@ public abstract class ShaderProgram {
 
     private String SHADERS_DIRECTORY_PATH = "src/main/java/org/lasmth/graphics/shaders";
 
+    // Used when loading matrix uniform variables.
+    private static FloatBuffer matrixBuffer = BufferUtils.createFloatBuffer(16);
+
     /**
      * Registers a shader program with OpenGL. The given vertex and fragment shaders are linked together
      * to form a shader program. The shader program is then registered with OpenGL, so it is ready to use.
@@ -32,9 +39,29 @@ public abstract class ShaderProgram {
         programId = GL20.glCreateProgram();
         GL20.glAttachShader(programId, vertexShaderId);
         GL20.glAttachShader(programId, fragmentShaderId);
+
+        bindAttributes();
+
         GL20.glLinkProgram(programId);
         GL20.glValidateProgram(programId);
-        bindAttributes();
+
+        getAllUniformLocations();
+    }
+
+    /**
+     * Should be used to retrieve and store all uniform memory locations
+     * for a shader program.
+     */
+    protected abstract void getAllUniformLocations();
+
+    /**
+     * Gets the memory location of a uniform variable in our shader program so we
+     * can modify the variable.
+     * @param uniformName Name of the variable exactly as it appears in shader program.
+     * @return Memory location of the variable.
+     */
+    protected int getUniformLocation(String uniformName) {
+        return GL20.glGetUniformLocation(programId, uniformName);
     }
 
     /**
@@ -77,6 +104,27 @@ public abstract class ShaderProgram {
         GL20.glBindAttribLocation(programId, attribute, variableName);
     }
 
+    protected void loadFloat(int uniformLocation, float value) {
+        GL20.glUniform1f(uniformLocation, value);
+    }
+
+    protected void loadVector(int uniformLocation, Vector3f vector) {
+        GL20.glUniform3f(uniformLocation, vector.x, vector.y, vector.z);
+    }
+
+    protected void loadBoolean(int uniformLocation, boolean value) {
+        float toLoad = 0;
+        if (value) {
+            toLoad = 1;
+        }
+        GL20.glUniform1f(uniformLocation, toLoad);
+    }
+
+    protected void loadMatrix(int uniformLocation, Matrix4f matrix) {
+        // Stores the matrix in the matrixBuffer.
+        matrix.get(matrixBuffer);
+        GL20.glUniformMatrix4fv(uniformLocation, false, matrixBuffer);
+    }
 
     /**
      * Loads a shader file from disk into memory.
