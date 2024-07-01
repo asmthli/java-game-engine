@@ -11,6 +11,21 @@ import org.lwjgl.opengl.GL30;
 
 public class Renderer {
 
+    private static final float FOV = 70;
+    private static final float NEAR_PLANE = 0.1f;
+    private static final float FAR_PLANE = 1000;
+
+    private Matrix4f projectionMatrix;
+
+    public Renderer(StaticShader shader) {
+        // Projection matrix will never change unless we decide to allow for window resizing
+        // or want to change the view frustrum.
+        createProjectionMatrix();
+        shader.start();
+        shader.loadProjectionMatrix(projectionMatrix);
+        shader.stop();
+    }
+
     /**
      * Clear the screen OpenGL canvas.
      */
@@ -44,4 +59,20 @@ public class Renderer {
         GL20.glDisableVertexAttribArray(1);
         GL30.glBindVertexArray(0);
     }
+
+    private void createProjectionMatrix() {
+		float aspectRatio = 1280f / 720f;
+		float y_scale = (float) (1f / Math.tan(Math.toRadians((FOV / 2f))) * aspectRatio);
+		float x_scale = y_scale / aspectRatio;
+		float frustrum_length = FAR_PLANE - NEAR_PLANE;
+
+		projectionMatrix = new Matrix4f();
+		projectionMatrix.zero();
+		projectionMatrix.set(0, 0, x_scale);
+		projectionMatrix.set(1, 1, y_scale);
+		projectionMatrix.set(2, 2, -((FAR_PLANE + NEAR_PLANE) / frustrum_length));
+		projectionMatrix.set(2, 3, -1);
+		projectionMatrix.set(3, 2, -((2 * NEAR_PLANE * FAR_PLANE) / frustrum_length));
+		projectionMatrix.set(3, 3, 0);
+	}
 }

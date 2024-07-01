@@ -12,8 +12,8 @@ import org.lasmth.windowmanager.Window;
 public class TestGame {
     private final Window window = Window.getInstance();
     private final Loader loader = new Loader();
-    private final Renderer renderer = new Renderer();
     private final StaticShader staticShader = new StaticShader();
+    private final Renderer renderer = new Renderer(staticShader);
 
     public static void main(String[] args) {
         new TestGame().run();
@@ -42,9 +42,10 @@ public class TestGame {
          RawModel rawModel = loader.loadToVAO(vertices, textureCoords, indices);
          int textureId = loader.loadTexture("image.png");
          TexturedModel texturedModel = new TexturedModel(rawModel, textureId);
-         Entity entity = new Entity(texturedModel, new Vector3f(-1, 0, 0), 0, 0, 0, 1);
+         Entity entity = new Entity(texturedModel, new Vector3f(0, 0, -1), 0, 0, 0, 1);
 
         while (!window.windowShouldClose()) {
+            entity.increasePosition(0,0,-0.01f);
             renderer.prepare();
             staticShader.start();
             renderer.render(entity, staticShader);
